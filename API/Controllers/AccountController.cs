@@ -2,8 +2,8 @@ using System.Security.Cryptography;
 using System.Text;
 using API.Data;
 using API.Dtos;
+using API.Entities;
 using API.Interfaces;
-using API.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
