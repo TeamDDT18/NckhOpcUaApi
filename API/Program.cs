@@ -5,6 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
+using API.OPCUALayer;
+using API.Models.OptionsModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +26,38 @@ builder.Services.AddDbContext<DataContext>(options =>
 
     options.UseMySql(connectionStrings, ServerVersion.AutoDetect(connectionStrings));
 });
+
+//services.AddCors(options =>
+//{
+//    options.AddPolicy("AllowAllHeaders",
+//        builder =>
+//        {
+//            builder.AllowAnyOrigin()
+//                    .AllowAnyHeader()
+//                    .AllowAnyMethod();
+//        });
+//});
+
+
+
+//JSON Serializer
+builder.Services.AddControllersWithViews()
+                .AddJsonOptions(options =>
+                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles)
+                .AddJsonOptions(options => options.JsonSerializerOptions.IgnoreReadOnlyProperties = true);
+
+//Identity
+//builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+//               .AddEntityFrameworkStores<ApplicationDbContext>()
+//               .AddDefaultTokenProviders();
+builder.Services.AddOptions();
+builder.Services.Configure<OPCUAServersOptions>(builder.Configuration.GetSection("OPCUAServersOptions"));
+// Register a singleton service managing OPC UA interactions
+builder.Services.AddSingleton<IUaClientSingleton, UaClient>();
+//builder.Services.AddSingleton<IMixingStationSingleton, Scada>(); //for scada
+
+
+builder.Services.AddSignalR();
 //add authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
