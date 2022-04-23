@@ -94,13 +94,32 @@ namespace API.Controllers
         [HttpPost("data-sets/route/expand")]
         public async Task<IActionResult> GetExpandNode([FromBody] string node_id)
         {
+            //var decodedNodeId = WebUtility.UrlDecode(node_id);
             string serverUrl = _uaServers[0].Url;
+
             if (!(await _uaClient.IsServerAvailable(serverUrl)))
                 return StatusCode(500, "Data Set For" + serverUrl + " NotAvailable");
             Tree tree;
-            tree = await _uaClient.GetChildren(serverUrl, node_id);
-            return Ok(tree);
+                tree = await _uaClient.GetChildren(serverUrl, node_id);
+            return Ok(tree); ;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="node_id"></param>
+        /// <param name="serverUrl"></param>
+        /// <returns></returns>
+        [HttpPost("data-sets/browsing-tree")]
+        public async Task<IActionResult> BrowserModel([FromBody] string node_id)
+        {
+            var serverUrl = _uaServers[0].Url;
+            if (!(await _uaClient.IsServerAvailable(serverUrl)))
+                return StatusCode(500, "Data Set For" + serverUrl + " NotAvailable");
+            var result = new JObject();
+            return Ok(result.ToString());
+
+        }
+
         /// <summary>
         /// 
         /// </summary>
